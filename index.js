@@ -141,7 +141,7 @@
 		/* Event handlers
 		----------------------------------------------- */
 		Overflow.prototype._onScroll = function (e) {
-
+			this.refresh();
 		};
 
 		/* Export
