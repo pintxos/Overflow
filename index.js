@@ -73,15 +73,15 @@
 		Overflow.prototype.refresh = function () {
 
 			if(this._scrollable.isEndReached()) {
-				this.setOverflow(Overflow.END);
-			}else {
 				this.removeOverflow(Overflow.END);
+			}else {
+				this.setOverflow(Overflow.END);
 			}
 
 			if(this._scrollable.isBeginReached()) {
-				this.setOverflow(Overflow.BEGIN);
-			}else {
 				this.removeOverflow(Overflow.BEGIN);
+			}else {
+				this.setOverflow(Overflow.BEGIN);
 			}
 		};
 
