@@ -70,7 +70,7 @@
 			Overflow._super.init.call(this);
 		};
 
-		Overflow.prototype.observe = function () {
+		Overflow.prototype.refresh = function () {
 
 			if(this._scrollable.isEndReached()) {
 				this.setOverflow(Overflow.END);
