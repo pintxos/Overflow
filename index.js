@@ -6,7 +6,7 @@
 	if(typeof define !== 'function') {
 		window.define = function(deps, definition) {
 			window.pintxos = window.pintxos || {};
-			window.pintxos.Overflow = definition(jQuery, pintxos.inherit, pintxos.Component, pintxos.Scrollable);
+			window.pintxos.Overflow = definition(jQuery, pintxos.inherit, pintxos.Component, pintxos.ScrollableNative);
 			define = null;
 		};
 	}
@@ -16,13 +16,13 @@
 		'jquery',
 		'pintxos-inherit',
 		'pintxos-component',
-		'pintxos-scrollable'
+		'pintxos-scrollable_native'
 	],
 	function (
 		$,
 		inherit,
 		Component,
-		Scrollable
+		ScrollableNative
 	) {
 
 
@@ -62,12 +62,17 @@
 		 */
 		Overflow.prototype.init = function () {
 
-			this._scrollable = new Scrollable(this.getScrollableEl()[0]);
+			this._scrollable = new ScrollableNative(this.getScrollableEl()[0], {
+				scrollableEl: this.getSettings().scrollableEl
+			});
+
 			this._scrollable.init();
 
 			this._on(this.getScrollableEl(), 'scroll', this._onScroll);
 
 			Overflow._super.init.call(this);
+
+			this.refresh();
 		};
 
 		Overflow.prototype.refresh = function () {
