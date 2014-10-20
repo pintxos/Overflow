@@ -136,10 +136,19 @@
 		 * @return {void}
 		 */
 		Overflow.prototype.destroy = function () {
+
+			var classes;
+
+			classes = this.getSettings().css;
+
 			this._$scrollableEl = undefined;
 
 			this._scrollable.destroy();
 			this._scrollable = undefined;
+
+			this.getEl()
+				.removeClass(classes.begin)
+				.removeClass(classes.end);
 
 			Overflow._super.destroy.call(this);
 		};
