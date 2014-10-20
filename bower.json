@@ -1,7 +1,8 @@
 {
   "name": "pintxos-overflow",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "homepage": "https://github.com/pintxos/Overflow",
+  "main": "index.js",
   "ignore": [
     "**/.*",
     "node_modules",

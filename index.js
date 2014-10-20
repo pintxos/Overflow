@@ -32,6 +32,7 @@
 		----------------------------------------------- */
 		_defaults = {
 			scrollableEl: undefined,
+			orientation: 'horizontal',
 			css: {
 				begin: 'js-overflow-begin',
 				end: 'js-overflow-end'
@@ -63,7 +64,8 @@
 		Overflow.prototype.init = function () {
 
 			this._scrollable = new ScrollableNative(this.getScrollableEl()[0], {
-				scrollableEl: this.getSettings().scrollableEl
+				scrollableEl: this.getSettings().scrollableEl,
+				orientation: this.getSettings().orientation
 			});
 
 			this._scrollable.init();
