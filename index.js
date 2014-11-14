@@ -6,7 +6,7 @@
 	if(typeof define !== 'function') {
 		window.define = function(deps, definition) {
 			window.pintxos = window.pintxos || {};
-			window.pintxos.Overflow = definition(jQuery, pintxos.inherit, pintxos.Component, pintxos.ScrollableNative);
+			window.pintxos.Overflow = definition(jQuery, pintxos.inherit, pintxos.Component, pintxos.ScrollableNative, pintxos.ScrollableHA);
 			define = null;
 		};
 	}
@@ -16,13 +16,15 @@
 		'jquery',
 		'pintxos-inherit',
 		'pintxos-component',
-		'pintxos-scrollable_native'
+		'pintxos-scrollable_native',
+		'pintxos-scrollable_ha'
 	],
 	function (
 		$,
 		inherit,
 		Component,
-		ScrollableNative
+		ScrollableNative,
+		ScrollableHA
 	) {
 
 
@@ -31,8 +33,11 @@
 		/* Default settings
 		----------------------------------------------- */
 		_defaults = {
-			scrollableEl: undefined,
 			orientation: 'horizontal',
+			useTranslate: false,
+			selectors: {
+				scrollableEl: undefined
+			},
 			css: {
 				begin: 'js-overflow-begin',
 				end: 'js-overflow-end'
@@ -43,16 +48,23 @@
 		/* Constructor
 		----------------------------------------------- */
 		Overflow = function (el, options) {
+
 			this._settings = $.extend(true, {}, _defaults, options);
 			Component.call(this, el, this._settings);
+
+			return this;
 		};
 
 		inherit(Overflow, Component);
+
 
 		/* Static properties
 		----------------------------------------------- */
 		Overflow.BEGIN = 'begin';
 		Overflow.END = 'end';
+		Overflow.HORIZONTAL = 'horizontal';
+		Overflow.VERTICAL = 'vertical';
+
 
 		/* Methods
 		----------------------------------------------- */
@@ -63,10 +75,13 @@
 		 */
 		Overflow.prototype.init = function () {
 
-			this._scrollable = new ScrollableNative(this.getScrollableEl()[0], {
-				scrollableEl: this.getSettings().scrollableEl,
+			var scrollableOptions;
+
+			scrollableOptions = {
 				orientation: this.getSettings().orientation
-			});
+			};
+
+			this._scrollable = (this.getSettings().useTranslate) ? new ScrollableHA(this.getScrollableEl()[0], scrollableOptions) : new ScrollableNative(this.getScrollableEl()[0], scrollableOptions);
 
 			this._scrollable.init();
 
@@ -75,8 +90,17 @@
 			Overflow._super.init.call(this);
 
 			this.refresh();
+
+			return this;
 		};
 
+		/**
+		 * Checks whether or not the scrollable container can be scrolled
+		 * in a certain direction. Applies the right Overflow css classes
+		 * trough setOverflow() and removeOverflow().
+		 *
+		 * @return {Overflow}
+		 */
 		Overflow.prototype.refresh = function () {
 
 			if(this._scrollable.isEndReached()) {
@@ -90,49 +114,46 @@
 			}else {
 				this.setOverflow(Overflow.BEGIN);
 			}
+
+			return this;
 		};
 
+		/**
+		 * Adds the overflow css class
+		 *
+		 * @param {String}
+		 * @return {Overflow}
+		 */
 		Overflow.prototype.setOverflow = function (pos) {
 			this.getEl().addClass(this.getSettings().css[pos]);
+
+			return this;
 		};
 
+		/**
+		 * Removes the overflow css class
+		 *
+		 * @param  {String}
+		 * @return {Overflow}
+		 */
 		Overflow.prototype.removeOverflow = function (pos) {
 			this.getEl().removeClass(this.getSettings().css[pos]);
+
+			return this;
 		};
 
-
-		Overflow.prototype.getScrollableEl = function (reset) {
-
-			var scrollableEl;
-
-			if(typeof this._$scrollableEl === 'undefined' || reset) {
-
-				scrollableEl = this.getSettings().scrollableEl;
-
-				if(typeof scrollableEl === 'undefined') {
-
-					// defaults to the component's main element
-					this._$scrollableEl = this.getEl();
-
-				}else if(scrollableEl instanceof $) {
-
-					// jQuery object
-					this._$scrollableEl = scrollableEl;
-
-				}else if(typeof scrollableEl === 'string') {
-
-					// selector
-					this._$scrollableEl = this._query(scrollableEl);
-
-				}
-
-			}
-
-			return this._$scrollableEl;
+		/**
+		 * Getter for scrollableEl
+		 *
+		 * @return {jQuery}
+		 */
+		Overflow.prototype.getScrollableEl = function () {
+			return this._resolveElement(this.getSettings().selectors.scrollableEl);
 		};
 
 		/**
 		 * All teardown logic should go here
+		 *
 		 * @return {void}
 		 */
 		Overflow.prototype.destroy = function () {
@@ -151,6 +172,8 @@
 				.removeClass(classes.end);
 
 			Overflow._super.destroy.call(this);
+
+			return this;
 		};
 
 
@@ -159,6 +182,7 @@
 		Overflow.prototype._onScroll = function (e) {
 			this.refresh();
 		};
+
 
 		/* Export
 		----------------------------------------------- */
